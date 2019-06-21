@@ -40,7 +40,8 @@ define('ABORT_AFTER_CONFIG', true);
 require_once('../../../config.php');
 global $CFG;
 
-$status = "";
+$start = microtime(true);
+$status = microtime(true) . " - start<br>\n";
 
 /**
  * Return an error that ELB will pick up
@@ -63,7 +64,7 @@ if ($size !== 1) {
 }
 
 if (file_exists($testfile)) {
-    $status .= "sitedata OK<br>\n";
+    $status .= microtime(true) . " - sitedata OK<br>\n";
 } else {
     failed('sitedata not readable');
 }
@@ -76,7 +77,7 @@ if ($sessionhandler) {
     $memcache = explode(':', $CFG->session_memcached_save_path );
     try {
         memcache_connect($memcache[0], $memcache[1], 3);
-        $status .= "session memcache OK<br>\n";
+        $status .= microtime(true) . " - session memcache OK<br>\n";
     } catch (Exception $e) {
         failed('sessions memcache');
     }
@@ -92,7 +93,7 @@ if (true) {
         // Try to get the first record from the user table.
         $user = $DB->get_record_sql('SELECT id FROM {user} WHERE 0 < id ', null, IGNORE_MULTIPLE);
         if ($user) {
-            $status .= "database OK<br>\n";
+            $status .= microtime(true) . " - database OK<br>\n";
         } else {
             failed('no users in database');
         }
@@ -101,6 +102,8 @@ if (true) {
     }
 }
 
+
+$status .= microtime(true) . " - end<br>\n";
 print "Server is ALIVE<br>\n";
 print $status;
 
